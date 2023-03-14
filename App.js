@@ -4,6 +4,11 @@ import { Camera } from "expo-camera";
 import * as FaceDetector from "expo-face-detector";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants  from "expo-constants";
+import AWS from "aws-sdk";
+import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
+import Config from "react-native-config";
+import { Buffer } from "buffer";
+import * as FileSystem from "expo-file-system";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -32,12 +37,18 @@ export default function App() {
   const [capturedImage, setCapturedImage] = useState(null);
   const [faceDetected, setFaceDetected] = useState(false);
   const cameraRef = useRef(null);
-
+const s3 = new AWS.S3({
+  accessKeyId: "AKIA5KTQWF6JJLZC35MX",
+  secretAccessKey: "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",
+  region: "us-east-1",
+});
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
+    
+
   }, []);
 
   if (hasPermission === null) {
@@ -55,14 +66,41 @@ export default function App() {
     }
   };
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
+ const takePicture = async () => {
+  if (cameraRef.current) {
       const options = { quality: 0.5, base64: true };
-      const data = await cameraRef.current.takePictureAsync(options);
-      setCapturedImage(data);
+      const { uri, base64 } = await cameraRef.current.takePictureAsync(options);
+
+      // Convert base64-encoded image to PNG file
+      const fileUri = `${FileSystem.documentDirectory}${Date.now()}.png`;
+      await FileSystem.writeAsStringAsync(fileUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Upload PNG file to S3
+      const key = `${Date.now()}.png`;
+      const fileBuffer = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const params = {
+        Bucket: "sanjays3-image-database",
+        Key: key,
+        Body: Buffer.from(fileBuffer, "base64"),
+        ContentType: "image/png",
+      };
+      s3.putObject(params, (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(`File uploaded successfully. ${data.Location}`);
+          setCapturedImage(uri)
+        }
+      });
     }
   };
 
+
+     
   const reset = () => {
     setCapturedImage(null);
     setFaceDetected(false);
@@ -75,7 +113,7 @@ export default function App() {
         type={Camera.Constants.Type.front}
         onFacesDetected={handleFacesDetected}
         faceDetectorSettings={{
-          mode: FaceDetector.FaceDetectorMode.fast,
+          mode: FaceDetector.FaceDetectorMode.accurate,
           detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
           runClassifications: FaceDetector.FaceDetectorClassifications.none,
           minDetectionInterval: 1000,
