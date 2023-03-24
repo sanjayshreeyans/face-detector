@@ -22,8 +22,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "sanjay.facedetector.one"
+      "package": "sanjay.facedetector.one",
+
     },
+    
     "web": {
       "favicon": "./assets/favicon.png"
     },

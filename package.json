@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-navigation/stack": "^6.3.16",
     "aws-sdk": "^2.1333.0",
     "expo": "~48.0.6",
     "expo-camera": "^13.2.1",
@@ -17,13 +18,18 @@
     "expo-face-detector": "~12.1.1",
     "expo-file-system": "^15.2.2",
     "expo-image-manipulator": "~11.1.1",
+    "expo-linear-gradient": "^12.1.2",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.3",
-    "react-native-config": "^1.5.0"
+    "react-native-config": "^1.5.0",
+    "react-navigation": "^4.4.4",
+    "react-navigation-stack": "^2.10.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@react-native-community/cli-platform-android": "^10.2.0",
+    "expo-optimize": "^0.2.20"
   },
   "private": true
 }
