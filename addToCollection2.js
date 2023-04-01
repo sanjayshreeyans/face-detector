@@ -27,8 +27,8 @@ export default function UploadToRekognition() {
 
   // Set up AWS SDK configuration a
   const rekognition = new AWS.Rekognition({
-    accessKeyId: "AKIA5KTQWF6JJLZC35MX",
-    secretAccessKey: "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",
+    accessKeyId: "apple",
+    secretAccessKey: "apple",
     region: "us-east-1",
   });
 
