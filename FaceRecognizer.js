@@ -46,8 +46,8 @@ export default function FaceRecognizer() {
   const [faceDetected, setFaceDetected] = useState(false);
   const cameraRef = useRef(null);
   const s3 = new AWS.S3({
-    accessKeyId: "AKIA5KTQWF6JJLZC35MX",
-    secretAccessKey: "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",
+    accessKeyId: "watermelon",
+    secretAccessKey: "watermelon",
     region: "us-east-1",
   });
   useEffect(() => {
